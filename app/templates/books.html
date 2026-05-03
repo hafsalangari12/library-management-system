@@ -24,6 +24,7 @@
                 <th>Language</th>
                 <th>Category</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -42,10 +43,21 @@
                         <span class="status checked">Checked Out</span>
                     {% endif %}
                 </td>
+
+                <td>
+    <a href="/books/edit/{{ book.id }}" class="small-btn">Edit</a>
+    <a href="/books/delete/{{ book.id }}" class="small-btn delete-btn">Delete</a>
+
+    {% if book.status == "Available" %}
+        <a href="/books/toggle/{{ book.id }}" class="small-btn">Checkout</a>
+    {% else %}
+        <a href="/books/toggle/{{ book.id }}" class="small-btn">Return</a>
+    {% endif %}
+</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6">No books added yet.</td>
+                <td colspan="7">No books added yet.</td>
             </tr>
             {% endfor %}
         </tbody>

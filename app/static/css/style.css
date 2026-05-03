@@ -273,3 +273,12 @@ tr:hover {
     border: none;
     outline: none;
 }
+.delete-btn {
+    background: #e53935;
+    color: white;
+    margin-left: 6px;
+}
+
+.delete-btn:hover {
+    background: #ff4d4d;
+}
