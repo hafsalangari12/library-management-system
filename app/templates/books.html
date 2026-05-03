@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Books Management</h1>
+        <p>Search, view, and manage all books in the library collection.</p>
+    </div>
+    <a href="/books/add" class="btn-primary">+ Add New Book</a>
+</section>
+
+<section class="search-box">
+    <input type="text" placeholder="Search by title, author, language, or year...">
+    <button>Search</button>
+</section>
+
+<section class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Language</th>
+                <th>Category</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.publication_year }}</td>
+                <td>{{ book.language }}</td>
+                <td>{{ book.category }}</td>
+                <td>
+                    {% if book.status == "Available" %}
+                        <span class="status available">Available</span>
+                    {% else %}
+                        <span class="status checked">Checked Out</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No books added yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

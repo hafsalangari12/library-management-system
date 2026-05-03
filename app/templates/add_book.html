@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="form-card">
+    <h1>Add New Book</h1>
+    <p>Enter the book details below to add it to the library collection.</p>
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Book Title</label>
+            <input type="text" name="title" placeholder="Enter book title">
+        </div>
+
+        <div class="form-group">
+            <label>Author</label>
+            <input type="text" name="author" placeholder="Enter author name">
+        </div>
+
+        <div class="form-group">
+            <label>Publication Year</label>
+            <input type="number" name="publication_year" placeholder="Example: 2020">
+        </div>
+
+        <div class="form-group">
+            <label>Language</label>
+            <input type="text" name="language" placeholder="Example: English">
+        </div>
+
+        <div class="form-group">
+            <label>Category</label>
+            <input type="text" name="category" placeholder="Example: Fiction">
+        </div>
+
+        <button type="submit" class="btn-primary">Save Book</button>
+    </form>
+</section>
+{% endblock %}
