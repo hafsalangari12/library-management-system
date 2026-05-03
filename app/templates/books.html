@@ -10,8 +10,10 @@
 </section>
 
 <section class="search-box">
-    <input type="text" placeholder="Search by title, author, language, or year...">
-    <button>Search</button>
+    <form method="GET" action="/books">
+        <input type="text" name="q" placeholder="Search by title or author...">
+        <button type="submit">Search</button>
+    </form>
 </section>
 
 <section class="table-card">

@@ -14,41 +14,56 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    # Login
+    # ---------------- LOGIN ----------------
     @app.route("/login", methods=["GET", "POST"])
     def login():
+        error = None
+
         if request.method == "POST":
-            username = request.form["username"]
-            password = request.form["password"]
+            username = request.form.get("username")
+            password = request.form.get("password")
 
             if username == "admin" and password == "admin":
                 session["user"] = username
                 return redirect(url_for("books"))
+            else:
+                error = "Invalid username or password"
 
-        return render_template("login.html")
+        return render_template("login.html", error=error)
 
     @app.route("/logout")
     def logout():
         session.pop("user", None)
         return redirect(url_for("login"))
 
-    # Protect pages
     def is_logged_in():
         return "user" in session
 
+    # ---------------- DASHBOARD ----------------
     @app.route("/")
     def dashboard():
         if not is_logged_in():
             return redirect(url_for("login"))
         return render_template("dashboard.html")
 
+    # ---------------- BOOKS (WITH SEARCH) ----------------
     @app.route("/books")
     def books():
         if not is_logged_in():
             return redirect(url_for("login"))
-        all_books = Book.query.all()
+
+        query = request.args.get("q")
+
+        if query:
+            all_books = Book.query.filter(
+                Book.title.contains(query) | Book.author.contains(query)
+            ).all()
+        else:
+            all_books = Book.query.all()
+
         return render_template("books.html", books=all_books)
 
+    # ---------------- ADD BOOK ----------------
     @app.route("/books/add", methods=["GET", "POST"])
     def add_book():
         if not is_logged_in():
@@ -68,6 +83,7 @@ def create_app():
 
         return render_template("add_book.html")
 
+    # ---------------- EDIT BOOK ----------------
     @app.route("/books/edit/<int:id>", methods=["GET", "POST"])
     def edit_book(id):
         if not is_logged_in():
@@ -87,6 +103,7 @@ def create_app():
 
         return render_template("edit_book.html", book=book)
 
+    # ---------------- DELETE BOOK ----------------
     @app.route("/books/delete/<int:id>")
     def delete_book(id):
         if not is_logged_in():
@@ -97,6 +114,7 @@ def create_app():
         db.session.commit()
         return redirect(url_for("books"))
 
+    # ---------------- CHECKOUT / RETURN ----------------
     @app.route("/books/toggle/<int:id>")
     def toggle_status(id):
         if not is_logged_in():
