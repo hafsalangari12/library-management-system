@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from app.models import db, Book
+from app.models import db, Book, User, History
 
 
 def create_app():
@@ -14,6 +14,16 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+        # Create sample users if empty
+        if User.query.count() == 0:
+            db.session.add_all([
+                User(name="Hafsa Langari"),
+                User(name="Hafizullah Khplwak"),
+                User(name="Mufeedullah Mamozai"),
+                User(name="Sapida Muska Masood")
+            ])
+            db.session.commit()
+
     # ---------------- LOGIN ----------------
     @app.route("/login", methods=["GET", "POST"])
     def login():
@@ -25,7 +35,7 @@ def create_app():
 
             if username == "admin" and password == "admin":
                 session["user"] = username
-                return redirect(url_for("books"))
+                return redirect(url_for("dashboard"))
             else:
                 error = "Invalid username or password"
 
@@ -114,7 +124,7 @@ def create_app():
         db.session.commit()
         return redirect(url_for("books"))
 
-    # ---------------- CHECKOUT / RETURN ----------------
+    # ---------------- CHECKOUT / RETURN WITH HISTORY ----------------
     @app.route("/books/toggle/<int:id>")
     def toggle_status(id):
         if not is_logged_in():
@@ -123,11 +133,36 @@ def create_app():
         book = Book.query.get_or_404(id)
 
         if book.status == "Available":
+            user = User.query.first()
             book.status = "Checked Out"
+
+            history = History(
+                book_id=book.id,
+                user_id=user.id,
+                action="Checked Out"
+            )
+            db.session.add(history)
+
         else:
             book.status = "Available"
 
+            history = History(
+                book_id=book.id,
+                user_id=None,
+                action="Returned"
+            )
+            db.session.add(history)
+
         db.session.commit()
         return redirect(url_for("books"))
+
+    # ---------------- HISTORY PAGE ----------------
+    @app.route("/history")
+    def history():
+        if not is_logged_in():
+            return redirect(url_for("login"))
+
+        records = History.query.order_by(History.timestamp.desc()).all()
+        return render_template("history.html", records=records)
 
     return app

@@ -28,3 +28,12 @@ A modern and user-friendly web-based library management system built using Flask
 
 1. Clone the repository
 2. Create virtual environment:
+## Project Highlights
+
+- Fully functional CRUD system
+- Secure login authentication
+- Book checkout and return system
+- Search functionality
+- History tracking (basic)
+- Modern UI design
+- Organized GitHub workflow with branches
